@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security;
 using DotNetNuke.Services.Tokens;
@@ -33,16 +34,55 @@ namespace ToSic.SexyContent.Engines.TokenEngine
         /// <param name="AccessLevel"></param>
         /// <param name="PropertyNotFound"></param>
         /// <returns></returns>
-        public string GetProperty(string strPropertyName, string strFormat, System.Globalization.CultureInfo formatProvider, UserInfo AccessingUser, Scope AccessLevel, ref bool PropertyNotFound)
+        public string GetProperty(string strPropertyName, string strFormat, CultureInfo formatProvider, UserInfo AccessingUser, Scope AccessLevel, ref bool PropertyNotFound)
         {
+	        if (_entity == null)
+				return string.Empty;
+			var entityWithValue = _entity;
+			// see if trying to access a sub-property...
+	        if (strPropertyName.IndexOf('.') > 0)
+	        {
+		        var subPropertyName = strPropertyName.Substring(strPropertyName.IndexOf('.') + 1); // used if we're going for a property of a related entity...
+		        strPropertyName = strPropertyName.Substring(0, strPropertyName.IndexOf('.'));
+		        try
+		        {
+			        var maybeEntityList = _entity.Entity[strPropertyName];
+
+			        if (maybeEntityList.GetType() == typeof (AttributeModel<EntityRelationshipModel>))
+			        {
+				        var entityIdList = ((ValueModel<EntityRelationshipModel>) (((AttributeModel<EntityRelationshipModel>) maybeEntityList).DefaultValue))
+							.TypedContents.EntityIds;
+						// var dEntityList = new DynamicEntity(_entity)[strPropertyName]
+						
+						// todo: get the entity with ID = entityIdList[0]
+				        //[0] as DynamicEntity;
+						// check if it is a list, select first, use that for the rest of the work...
+						// then set strpropertyname to be the subPropertyName
+						// entityWithValue = new DynamicEntity(childEntity);
+				        strPropertyName = subPropertyName;
+			        }
+			        else
+			        {
+				        // this is the case if a subproperty was accessed, and the relationship doesn't even exist
+				        return string.Empty;
+			        }
+
+		        }
+		        catch
+		        {
+			        return string.Empty;
+		        }
+	        }
+
             // Return empty string if Entity is null
-            if (_entity == null)
+			if (entityWithValue == null)
                 return string.Empty;
 
             string outputFormat = strFormat == string.Empty ? "g" : strFormat;
 
             bool propertyNotFound;
-            object valueObject = _entity.GetEntityValue(strPropertyName, out propertyNotFound);
+			object valueObject = entityWithValue.GetEntityValue(strPropertyName, out propertyNotFound);
+	        
 
             if (!propertyNotFound && valueObject != null)
             {
@@ -59,6 +99,10 @@ namespace ToSic.SexyContent.Engines.TokenEngine
                     case "Int64":
                     case "Decimal":
                         return (((IFormattable)valueObject).ToString(outputFormat, formatProvider));
+
+					// todo: 2dm - add ability to access related-objects properties like "Content:Author.Name"
+					case "List`1":
+		                throw new Exception("trying to get relationship to work...");
                     default:
                         return PropertyAccess.FormatString(valueObject.ToString(), strFormat);
                 }

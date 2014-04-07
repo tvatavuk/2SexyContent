@@ -46,6 +46,7 @@ namespace ToSic.SexyContent
             //return true;
         }
 
+		// todo: 2dm: ensure to add an empty collection if it's a reference
         public bool TryGetMember(string memberName, out object result)
         {
             var propertyNotFound = false;

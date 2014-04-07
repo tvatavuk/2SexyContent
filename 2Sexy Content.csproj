@@ -655,13 +655,13 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62596</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://2flex2sexycontent.local/DesktopModules/ToSIC_SexyContent</IISUrl>
+          <IISUrl>http://2sxc.2dm.2sic/DesktopModules/ToSIC_SexyContent</IISUrl>
           <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
-          <IISAppRootUrl>http://2flex2sexycontent.local/</IISAppRootUrl>
+          <IISAppRootUrl>http://2sxc.2dm.2sic/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
