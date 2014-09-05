@@ -181,7 +181,7 @@ BEGIN
 END')
 
 -- Add a new template-app assignment
-ALTER TABLE dbo.ToSIC_SexyContent_Templates ADD	AppID int NULL
+ALTER TABLE ToSIC_SexyContent_Templates ADD	AppID int NULL
 
 -- Assign all templates to an app
 EXEC('UPDATE       ToSIC_SexyContent_Templates
@@ -189,8 +189,10 @@ SET                AppID = ToSIC_EAV_AttributeSets.AppID
 FROM            ToSIC_SexyContent_Templates INNER JOIN
                          ToSIC_EAV_AttributeSets ON ToSIC_SexyContent_Templates.AttributeSetID = ToSIC_EAV_AttributeSets.AttributeSetID')
 
-EXEC('ALTER TABLE dbo.ToSIC_SexyContent_Templates ALTER COLUMN AppID int NOT NULL')
+EXEC('ALTER TABLE ToSIC_SexyContent_Templates ALTER COLUMN AppID int NOT NULL')
 
 -- Commit the transaction
 COMMIT TRANSACTION SexyContentUpdate;
 --ROLLBACK TRANSACTION SexyContentUpdate;
+
+GO

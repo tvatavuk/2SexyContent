@@ -9,11 +9,11 @@
 -- the installation works.
 
 DECLARE @IsUpgradeFromPreviousVersion int
-SELECT @IsUpgradeFromPreviousVersion = CASE WHEN EXISTS(SELECT * FROM DesktopModules WHERE ModuleName = N'2SexyContent') THEN CAST (1 AS BIT) ELSE CAST (0 AS BIT) END
+SELECT @IsUpgradeFromPreviousVersion = CASE WHEN EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}DesktopModules WHERE ModuleName = N'2SexyContent') THEN CAST (1 AS BIT) ELSE CAST (0 AS BIT) END
 
 If @IsUpgradeFromPreviousVersion = 1
 BEGIN
-	UPDATE       DesktopModules
+	UPDATE       {databaseOwner}{objectQualifier}DesktopModules
 	SET                ModuleName = N'2sxc'
 	WHERE        (ModuleName = N'2SexyContent')
 
@@ -43,9 +43,9 @@ FROM ToSIC_EAV_AttributeTypes WHERE ToSIC_EAV_AttributeTypes.Type = N'File'
 
 IF @FileAttributeType IS NOT NULL
 BEGIN
-	INSERT INTO [dbo].[ToSIC_EAV_AttributeTypes] ([Type]) VALUES ('Hyperlink')
+	INSERT INTO [ToSIC_EAV_AttributeTypes] ([Type]) VALUES ('Hyperlink')
 	UPDATE ToSIC_EAV_Attributes SET [Type] = 'Hyperlink' WHERE [Type] = 'File'
-	DELETE [dbo].[ToSIC_EAV_AttributeTypes] WHERE [Type] = 'File'
+	DELETE [ToSIC_EAV_AttributeTypes] WHERE [Type] = 'File'
 	UPDATE ToSIC_EAV_AttributeSets SET StaticName = '@Hyperlink', Name = '@Hyperlink' WHERE StaticName = '@File' AND Name = '@File'
 END
 
@@ -149,3 +149,5 @@ END
 -- Commit the transaction
 COMMIT TRANSACTION SexyContentUpdate;
 --ROLLBACK TRANSACTION SexyContentUpdate;
+
+GO

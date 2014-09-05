@@ -11,7 +11,7 @@ ELSE
 	SET @ChangeLogID = 1
 
 -- Extend Entities with ChangeLogModified
-EXEC('ALTER TABLE dbo.ToSIC_EAV_Entities ADD
+EXEC('ALTER TABLE ToSIC_EAV_Entities ADD
 	ChangeLogModified int NULL')
 
 -- Update all Entites with ChangeLogModified
@@ -25,14 +25,14 @@ FROM            ToSIC_EAV_Entities LEFT OUTER JOIN
                          ToSIC_EAV_Values ON ToSIC_EAV_Entities.EntityID = ToSIC_EAV_Values.EntityID')
 
 -- Make ChangeLogModified Not Nullable
-EXEC('ALTER TABLE dbo.ToSIC_EAV_Entities ALTER COLUMN ChangeLogModified int NOT NULL')
+EXEC('ALTER TABLE ToSIC_EAV_Entities ALTER COLUMN ChangeLogModified int NOT NULL')
 
 -- Add FOREIGN KEY CONSTRAINT
-EXEC('ALTER TABLE dbo.ToSIC_EAV_Entities ADD CONSTRAINT
+EXEC('ALTER TABLE ToSIC_EAV_Entities ADD CONSTRAINT
 	FK_ToSIC_EAV_Entities_ToSIC_EAV_ChangeLog_Modified FOREIGN KEY
 	(
 	ChangeLogModified
-	) REFERENCES dbo.ToSIC_EAV_ChangeLog
+	) REFERENCES ToSIC_EAV_ChangeLog
 	(
 	ChangeID
 	) ON UPDATE  NO ACTION 
@@ -42,3 +42,5 @@ EXEC('ALTER TABLE dbo.ToSIC_EAV_Entities ADD CONSTRAINT
 -- Commit the transaction
 COMMIT TRANSACTION SexyContentUpdate;
 --ROLLBACK TRANSACTION SexyContentUpdate;
+
+GO

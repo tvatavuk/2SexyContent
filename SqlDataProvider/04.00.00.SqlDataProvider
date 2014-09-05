@@ -9,11 +9,11 @@
 -- the installation works.
 
 DECLARE @IsUpgradeFromPreviousVersion int
-SELECT @IsUpgradeFromPreviousVersion = CASE WHEN EXISTS(SELECT * FROM DesktopModules WHERE ModuleName = N'2SexyContent') THEN CAST (1 AS BIT) ELSE CAST (0 AS BIT) END
+SELECT @IsUpgradeFromPreviousVersion = CASE WHEN EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}DesktopModules WHERE ModuleName = N'2SexyContent') THEN CAST (1 AS BIT) ELSE CAST (0 AS BIT) END
 
 If @IsUpgradeFromPreviousVersion = 1
 BEGIN
-	UPDATE       DesktopModules
+	UPDATE       {databaseOwner}{objectQualifier}DesktopModules
 	SET                ModuleName = N'2sxc'
 	WHERE        (ModuleName = N'2SexyContent')
 
@@ -34,7 +34,7 @@ EXEC ('
 SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 
-CREATE TABLE [dbo].[ToSIC_EAV_Dimensions](
+CREATE TABLE [ToSIC_EAV_Dimensions](
 	[DimensionID] [int] IDENTITY(1,1) NOT NULL,
 	[Parent] [int] NULL,
 	[Name] [nvarchar](100) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE [dbo].[ToSIC_EAV_Dimensions](
 
 
 -- Create Table [ToSIC_EAV_ValuesDimensions]
-CREATE TABLE [dbo].[ToSIC_EAV_ValuesDimensions](
+CREATE TABLE [ToSIC_EAV_ValuesDimensions](
 	[ValueID] [int] NOT NULL,
 	[DimensionID] [int] NOT NULL,
  CONSTRAINT [PK_ToSIC_EAV_ValuesDimensions] PRIMARY KEY CLUSTERED 
@@ -62,24 +62,24 @@ CREATE TABLE [dbo].[ToSIC_EAV_ValuesDimensions](
 
 
 -- Create CONSTRAINTs
-ALTER TABLE [dbo].[ToSIC_EAV_ValuesDimensions]  WITH CHECK ADD  CONSTRAINT [FK_ToSIC_EAV_ValuesDimensions_ToSIC_EAV_Dimensions] FOREIGN KEY([DimensionID])
-REFERENCES [dbo].[ToSIC_EAV_Dimensions] ([DimensionID])');
+ALTER TABLE [ToSIC_EAV_ValuesDimensions]  WITH CHECK ADD  CONSTRAINT [FK_ToSIC_EAV_ValuesDimensions_ToSIC_EAV_Dimensions] FOREIGN KEY([DimensionID])
+REFERENCES [ToSIC_EAV_Dimensions] ([DimensionID])');
 
 
-EXEC ('ALTER TABLE [dbo].[ToSIC_EAV_ValuesDimensions] CHECK CONSTRAINT [FK_ToSIC_EAV_ValuesDimensions_ToSIC_EAV_Dimensions]');
+EXEC ('ALTER TABLE [ToSIC_EAV_ValuesDimensions] CHECK CONSTRAINT [FK_ToSIC_EAV_ValuesDimensions_ToSIC_EAV_Dimensions]');
 
-EXEC ('ALTER TABLE [dbo].[ToSIC_EAV_ValuesDimensions]  WITH CHECK ADD  CONSTRAINT [FK_ToSIC_EAV_ValuesDimensions_ToSIC_EAV_Values] FOREIGN KEY([ValueID])
-REFERENCES [dbo].[ToSIC_EAV_Values] ([ValueID])');
+EXEC ('ALTER TABLE [ToSIC_EAV_ValuesDimensions]  WITH CHECK ADD  CONSTRAINT [FK_ToSIC_EAV_ValuesDimensions_ToSIC_EAV_Values] FOREIGN KEY([ValueID])
+REFERENCES [ToSIC_EAV_Values] ([ValueID])');
 
-EXEC('ALTER TABLE [dbo].[ToSIC_EAV_ValuesDimensions] CHECK CONSTRAINT [FK_ToSIC_EAV_ValuesDimensions_ToSIC_EAV_Values]');
+EXEC('ALTER TABLE [ToSIC_EAV_ValuesDimensions] CHECK CONSTRAINT [FK_ToSIC_EAV_ValuesDimensions_ToSIC_EAV_Values]');
 
 
 EXEC('
-ALTER TABLE dbo.ToSIC_EAV_Dimensions ADD CONSTRAINT
+ALTER TABLE ToSIC_EAV_Dimensions ADD CONSTRAINT
 	FK_ToSIC_EAV_Dimensions_ToSIC_EAV_Dimensions1 FOREIGN KEY
 	(
 	Parent
-	) REFERENCES dbo.ToSIC_EAV_Dimensions
+	) REFERENCES ToSIC_EAV_Dimensions
 	(
 	DimensionID
 	) ON UPDATE  NO ACTION 
@@ -91,9 +91,9 @@ DELETE FROM ToSIC_EAV_Values WHERE IsCurrent = 0
 
 
 -- Remove Column IsCurrent
-ALTER TABLE dbo.ToSIC_EAV_Values
+ALTER TABLE ToSIC_EAV_Values
 	DROP CONSTRAINT DF_ToSIC_EAV_Values_IsCurrent
-ALTER TABLE dbo.ToSIC_EAV_Values
+ALTER TABLE ToSIC_EAV_Values
 	DROP COLUMN IsCurrent
 
 
@@ -103,23 +103,22 @@ INSERT INTO ToSIC_EAV_Dimensions (DimensionID, Name, SystemKey) VALUES (1, ''Cul
 SET IDENTITY_INSERT ToSIC_EAV_Dimensions OFF
 
 -- Extend ValuesDimensions with ReadOnly
-ALTER TABLE dbo.ToSIC_EAV_ValuesDimensions ADD
+ALTER TABLE ToSIC_EAV_ValuesDimensions ADD
 	[ReadOnly] bit NOT NULL CONSTRAINT DF_ToSIC_EAV_ValuesDimensions_ReadOnly DEFAULT 0');
 
 
-EXEC('ALTER TABLE dbo.ToSIC_EAV_ValuesDimensions SET (LOCK_ESCALATION = TABLE)
 
 
 -- Add Colum ChangeLogModified
-ALTER TABLE dbo.ToSIC_EAV_Values ADD
+EXEC('ALTER TABLE ToSIC_EAV_Values ADD
 	ChangeLogModified int NULL');
 
 
-EXEC('ALTER TABLE dbo.ToSIC_EAV_Values ADD CONSTRAINT
+EXEC('ALTER TABLE ToSIC_EAV_Values ADD CONSTRAINT
 FK_ToSIC_EAV_Values_ToSIC_EAV_ChangeLogModified FOREIGN KEY
 (
 	ChangeLogModified
-) REFERENCES dbo.ToSIC_EAV_ChangeLog
+) REFERENCES ToSIC_EAV_ChangeLog
 (
 	ChangeID
 ) ON UPDATE  NO ACTION 
@@ -127,7 +126,7 @@ FK_ToSIC_EAV_Values_ToSIC_EAV_ChangeLogModified FOREIGN KEY
 
 
 -- Add Column Active
-ALTER TABLE dbo.ToSIC_EAV_Dimensions ADD
+ALTER TABLE ToSIC_EAV_Dimensions ADD
 	Active bit NOT NULL CONSTRAINT DF_ToSIC_EAV_Dimensions_Active DEFAULT 1
 
 
@@ -140,7 +139,7 @@ SET QUOTED_IDENTIFIER ON
 
 -- Create Table [ToSIC_EAV_Apps]
 
-CREATE TABLE [dbo].[ToSIC_EAV_Apps](
+CREATE TABLE [ToSIC_EAV_Apps](
 	[AppID] [int] IDENTITY(1,1) NOT NULL,
 	[ZoneID] [int] NOT NULL,
 	[Name] [nvarchar](255) NOT NULL,
@@ -152,7 +151,7 @@ CREATE TABLE [dbo].[ToSIC_EAV_Apps](
 
 
 -- Create Table [ToSIC_EAV_Zones]
-CREATE TABLE [dbo].[ToSIC_EAV_Zones](
+CREATE TABLE [ToSIC_EAV_Zones](
 	[ZoneID] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](255) NOT NULL,
  CONSTRAINT [PK_ToSIC_EAV_Zones] PRIMARY KEY CLUSTERED 
@@ -163,38 +162,38 @@ CREATE TABLE [dbo].[ToSIC_EAV_Zones](
 
 
 -- Add AppID to AttributeSets
-ALTER TABLE dbo.ToSIC_EAV_AttributeSets ADD
+ALTER TABLE ToSIC_EAV_AttributeSets ADD
 	AppID int NULL
 
 -- Add ZoneID to Dimensions
-ALTER TABLE dbo.ToSIC_EAV_Dimensions ADD
+ALTER TABLE ToSIC_EAV_Dimensions ADD
 	ZoneID int NULL
 
 
 -- Create CONSTRAINTs
-ALTER TABLE [dbo].[ToSIC_EAV_Apps]  WITH CHECK ADD  CONSTRAINT [FK_ToSIC_EAV_Apps_ToSIC_EAV_Zones] FOREIGN KEY([ZoneID])
-REFERENCES [dbo].[ToSIC_EAV_Zones] ([ZoneID])
+ALTER TABLE [ToSIC_EAV_Apps]  WITH CHECK ADD  CONSTRAINT [FK_ToSIC_EAV_Apps_ToSIC_EAV_Zones] FOREIGN KEY([ZoneID])
+REFERENCES [ToSIC_EAV_Zones] ([ZoneID])
 
 
-ALTER TABLE [dbo].[ToSIC_EAV_Apps] CHECK CONSTRAINT [FK_ToSIC_EAV_Apps_ToSIC_EAV_Zones]
+ALTER TABLE [ToSIC_EAV_Apps] CHECK CONSTRAINT [FK_ToSIC_EAV_Apps_ToSIC_EAV_Zones]
 
 
-ALTER TABLE dbo.ToSIC_EAV_AttributeSets ADD CONSTRAINT
+ALTER TABLE ToSIC_EAV_AttributeSets ADD CONSTRAINT
 	FK_ToSIC_EAV_AttributeSets_ToSIC_EAV_Apps FOREIGN KEY
 	(
 	AppID
-	) REFERENCES dbo.ToSIC_EAV_Apps
+	) REFERENCES ToSIC_EAV_Apps
 	(
 	AppID
 	) ON UPDATE  NO ACTION 
 	 ON DELETE  NO ACTION 
 
 
-ALTER TABLE dbo.ToSIC_EAV_Dimensions ADD CONSTRAINT
+ALTER TABLE ToSIC_EAV_Dimensions ADD CONSTRAINT
 	FK_ToSIC_EAV_Dimensions_ToSIC_EAV_Zones FOREIGN KEY
 	(
 	ZoneID
-	) REFERENCES dbo.ToSIC_EAV_Zones
+	) REFERENCES ToSIC_EAV_Zones
 	(
 	ZoneID
 	) ON UPDATE  NO ACTION 
@@ -203,12 +202,12 @@ ALTER TABLE dbo.ToSIC_EAV_Dimensions ADD CONSTRAINT
 
 -- Create Default Zone
 SET IDENTITY_INSERT [ToSIC_EAV_Zones] ON
-INSERT INTO [dbo].[ToSIC_EAV_Zones] ([ZoneID], [Name]) VALUES (1, ''Default'')
+INSERT INTO [ToSIC_EAV_Zones] ([ZoneID], [Name]) VALUES (1, ''Default'')
 SET IDENTITY_INSERT [ToSIC_EAV_Zones] OFF
 
 -- Create Default App
 SET IDENTITY_INSERT [ToSIC_EAV_Apps] ON
-INSERT INTO [dbo].[ToSIC_EAV_Apps] ([AppID], [ZoneID], [Name]) VALUES (1, 1, ''Default'')
+INSERT INTO [ToSIC_EAV_Apps] ([AppID], [ZoneID], [Name]) VALUES (1, 1, ''Default'')
 SET IDENTITY_INSERT [ToSIC_EAV_Apps] OFF');
 
 EXEC('
@@ -235,7 +234,7 @@ SELECT DISTINCT Portals.PortalID, ''ToSIC_SexyContent_ZoneID'', ''1'', -1, GETDA
 FROM            Modules INNER JOIN
                          TabModules ON Modules.ModuleID = TabModules.ModuleID INNER JOIN
                          ModuleDefinitions INNER JOIN
-                         DesktopModules ON ModuleDefinitions.DesktopModuleID = DesktopModules.DesktopModuleID ON 
+                         {databaseOwner}{objectQualifier}DesktopModules ON ModuleDefinitions.DesktopModuleID = {databaseOwner}{objectQualifier}DesktopModules.DesktopModuleID ON 
                          Modules.ModuleDefID = ModuleDefinitions.ModuleDefID INNER JOIN
                          Tabs ON TabModules.TabID = Tabs.TabID INNER JOIN
                          Portals ON Tabs.PortalID = Portals.PortalID
@@ -248,3 +247,5 @@ WHERE        (DesktopModules.ModuleName = N''2sxc'') AND
 
 -- Commit the transaction
 COMMIT TRANSACTION SexyContentUpdate;
+
+GO

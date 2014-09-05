@@ -9,11 +9,11 @@
 -- the installation works.
 
 DECLARE @IsUpgradeFromPreviousVersion int
-SELECT @IsUpgradeFromPreviousVersion = CASE WHEN EXISTS(SELECT * FROM DesktopModules WHERE ModuleName = N'2SexyContent') THEN CAST (1 AS BIT) ELSE CAST (0 AS BIT) END
+SELECT @IsUpgradeFromPreviousVersion = CASE WHEN EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}DesktopModules WHERE ModuleName = N'2SexyContent') THEN CAST (1 AS BIT) ELSE CAST (0 AS BIT) END
 
 If @IsUpgradeFromPreviousVersion = 1
 BEGIN
-	UPDATE       DesktopModules
+	UPDATE       {databaseOwner}{objectQualifier}DesktopModules
 	SET                ModuleName = N'2sxc'
 	WHERE        (ModuleName = N'2SexyContent')
 
@@ -99,3 +99,5 @@ Begin
 End
 
 Commit
+
+GO

@@ -13,7 +13,7 @@ ELSE
 SELECT @ChangeLogID
 
 
-ALTER TABLE dbo.ToSIC_EAV_Entities ADD
+ALTER TABLE ToSIC_EAV_Entities ADD
 	IsPublished bit NOT NULL CONSTRAINT DF_ToSIC_EAV_Entities_IsPublished DEFAULT 1,
 	PublishedEntityId int NULL
 
@@ -40,3 +40,5 @@ WHERE        (NOT (ToSIC_EAV_Entities.ChangeLogDeleted IS NULL))
 -- Commit the transaction
 COMMIT TRANSACTION SexyContentUpdate;
 --ROLLBACK TRANSACTION SexyContentUpdate;
+
+GO

@@ -335,32 +335,40 @@
 
         <component type="Assembly">
           <assemblies>
-            <basePath>bin</basePath>
             <assembly>
+              <path>bin</path>
               <name>ToSic.SexyContent.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>ToSic.SexyContent.Razor.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>ToSic.Eav.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>ToSic.Eav.ManagementUI.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>Microsoft.Practices.Unity.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>Microsoft.Practices.Unity.Configuration.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>ImageResizer.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>ImageResizer.Plugins.TinyCache.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>protobuf-net.dll</name>
             </assembly>
           </assemblies>
@@ -392,6 +400,7 @@
 
         <component type="Cleanup" version="05.00.00">
           <files>
+            <basePath>/</basePath>
             <file>
               <path>bin</path>
               <name>ToSic.EAV.Library.dll</name>
@@ -400,6 +409,7 @@
         </component>
         <component type="Cleanup" version="05.00.01">
           <files>
+            <basePath>/</basePath>
             <file>
               <path>bin</path>
               <name>ToSIC.Modules.SexyContent.dll</name>
@@ -412,6 +422,7 @@
         </component>
         <component type="Cleanup" version="05.05.01">
           <files>
+            <basePath>/</basePath>
             <file>
               <path>DesktopModules\ToSIC_SexyContent\App_LocalResources</path>
               <name>ContentTypeAndDemoSelector.ascx.de-DE.resx</name>
@@ -593,6 +604,10 @@
       <license src="License.txt"></license>
       <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
       <azureCompatible>true</azureCompatible>
+      <dependencies>
+        <dependency type="type">System.Dynamic.ExpandoObject</dependency>
+        <dependency type="CoreVersion">07.02.00</dependency>
+      </dependencies>
       <components>
         <component type="Module">
           <desktopModule>

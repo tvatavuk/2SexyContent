@@ -9,11 +9,11 @@
 -- the installation works.
 
 DECLARE @IsUpgradeFromPreviousVersion int
-SELECT @IsUpgradeFromPreviousVersion = CASE WHEN EXISTS(SELECT * FROM DesktopModules WHERE ModuleName = N'2SexyContent') THEN CAST (1 AS BIT) ELSE CAST (0 AS BIT) END
+SELECT @IsUpgradeFromPreviousVersion = CASE WHEN EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}DesktopModules WHERE ModuleName = N'2SexyContent') THEN CAST (1 AS BIT) ELSE CAST (0 AS BIT) END
 
 If @IsUpgradeFromPreviousVersion = 1
 BEGIN
-	UPDATE       DesktopModules
+	UPDATE       {databaseOwner}{objectQualifier}DesktopModules
 	SET                ModuleName = N'2sxc'
 	WHERE        (ModuleName = N'2SexyContent')
 
@@ -65,11 +65,11 @@ BEGIN
 		INSERT INTO ToSIC_EAV_AttributesInSets (AttributeSetID, AttributeID, IsTitle, SortOrder, AttributeGroupID)
 		VALUES (@EntityAttributeSetID, @ListIdAttributeID, 0, 3, 1)		
 		
-		INSERT INTO [dbo].[ToSIC_EAV_Entities] ([EntityGUID], [AttributeSetID], [AssignmentObjectTypeID], [KeyNumber], SortOrder, [ChangeLogCreated])
+		INSERT INTO [ToSIC_EAV_Entities] ([EntityGUID], [AttributeSetID], [AssignmentObjectTypeID], [KeyNumber], SortOrder, [ChangeLogCreated])
 		VALUES (NEWID(), @AllAttributeSetID, 2, @ListIdAttributeID, 0, @ChangeLogID)
 		
 		-- Add Notes
-		INSERT INTO [dbo].[ToSIC_EAV_Values]([EntityID], [AttributeID], [Value], [ChangeLogCreated])
+		INSERT INTO [ToSIC_EAV_Values]([EntityID], [AttributeID], [Value], [ChangeLogCreated])
 		SELECT    SCOPE_IDENTITY(), ToSIC_EAV_Attributes.AttributeID, CASE StaticName WHEN 'Notes' THEN 'Enter the ModuleId of the Module (List) to show Entities from.'
 		WHEN 'Name' THEN 'Module Id' ELSE NULL END AS Value, @ChangeLogID
 		FROM ToSIC_EAV_Attributes INNER JOIN ToSIC_EAV_AttributesInSets ON ToSIC_EAV_Attributes.AttributeID = ToSIC_EAV_AttributesInSets.AttributeID
@@ -82,3 +82,5 @@ END
 -- Commit the transaction
 COMMIT TRANSACTION SexyContentUpdate;
 --ROLLBACK TRANSACTION SexyContentUpdate;
+
+GO

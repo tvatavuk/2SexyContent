@@ -28,3 +28,5 @@ VALUES (@AppAttributeSetID, @AttributeID, 0, 7, 1)
 -- Commit the transaction
 COMMIT TRANSACTION SexyContentUpdate;
 --ROLLBACK TRANSACTION SexyContentUpdate;
+
+GO
