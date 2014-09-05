@@ -229,21 +229,21 @@ ALTER TABLE ToSIC_EAV_Dimensions
 
 -- Assign all existing portals using 2sexycontent to Zone 1
 -- Select all Portals using 2SexyContent
-INSERT INTO PortalSettings (PortalID, SettingName, SettingValue, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate, CultureCode)
-SELECT DISTINCT Portals.PortalID, ''ToSIC_SexyContent_ZoneID'', ''1'', -1, GETDATE(), -1, GETDATE(), ''en-us''
-FROM            Modules INNER JOIN
-                         TabModules ON Modules.ModuleID = TabModules.ModuleID INNER JOIN
-                         ModuleDefinitions INNER JOIN
-                         {databaseOwner}{objectQualifier}DesktopModules ON ModuleDefinitions.DesktopModuleID = {databaseOwner}{objectQualifier}DesktopModules.DesktopModuleID ON 
-                         Modules.ModuleDefID = ModuleDefinitions.ModuleDefID INNER JOIN
-                         Tabs ON TabModules.TabID = Tabs.TabID INNER JOIN
-                         Portals ON Tabs.PortalID = Portals.PortalID
-WHERE        (DesktopModules.ModuleName = N''2sxc'') AND
-                             ((SELECT COUNT(*) FROM PortalSettings
-							 WHERE (SettingName = N''ToSIC_SexyContent_ZoneID'') AND (PortalID = Portals.PortalID)) = 0)');
+INSERT INTO {databaseOwner}{objectQualifier}PortalSettings (PortalID, SettingName, SettingValue, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate, CultureCode)
+SELECT DISTINCT {databaseOwner}{objectQualifier}Portals.PortalID, ''ToSIC_SexyContent_ZoneID'', ''1'', -1, GETDATE(), -1, GETDATE(), ''en-us''
+FROM            {databaseOwner}{objectQualifier}Modules INNER JOIN
+                         {databaseOwner}{objectQualifier}TabModules ON {databaseOwner}{objectQualifier}Modules.ModuleID = {databaseOwner}{objectQualifier}TabModules.ModuleID INNER JOIN
+                         {databaseOwner}{objectQualifier}ModuleDefinitions INNER JOIN
+                         {databaseOwner}{objectQualifier}DesktopModules ON {databaseOwner}{objectQualifier}ModuleDefinitions.DesktopModuleID = {databaseOwner}{objectQualifier}DesktopModules.DesktopModuleID ON 
+                         {databaseOwner}{objectQualifier}Modules.ModuleDefID = {databaseOwner}{objectQualifier}ModuleDefinitions.ModuleDefID INNER JOIN
+                         {databaseOwner}{objectQualifier}Tabs ON {databaseOwner}{objectQualifier}TabModules.TabID = {databaseOwner}{objectQualifier}Tabs.TabID INNER JOIN
+                         {databaseOwner}{objectQualifier}Portals ON {databaseOwner}{objectQualifier}Tabs.PortalID = {databaseOwner}{objectQualifier}Portals.PortalID
+WHERE        ({databaseOwner}{objectQualifier}DesktopModules.ModuleName = N''2sxc'') AND
+                             ((SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}PortalSettings
+							 WHERE (SettingName = N''ToSIC_SexyContent_ZoneID'') AND (PortalID = {databaseOwner}{objectQualifier}Portals.PortalID)) = 0)');
 
 
---SELECT * FROM PortalSettings WHERE SettingName = N''ToSIC_SexyContent_ZoneID'';');
+--SELECT * FROM {databaseOwner}{objectQualifier}PortalSettings WHERE SettingName = N''ToSIC_SexyContent_ZoneID'';');
 
 -- Commit the transaction
 COMMIT TRANSACTION SexyContentUpdate;

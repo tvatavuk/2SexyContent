@@ -101,7 +101,7 @@ FROM            ToSIC_EAV_Entities INNER JOIN
                          ToSIC_EAV_AssignmentObjectTypes ON ToSIC_EAV_Entities.AssignmentObjectTypeID = ToSIC_EAV_AssignmentObjectTypes.AssignmentObjectTypeID INNER JOIN
                          ToSIC_SexyContent_Templates ON ToSIC_EAV_Entities.KeyNumber = ToSIC_SexyContent_Templates.TemplateID INNER JOIN
                              (SELECT        PortalID, CAST(SettingValue AS int) AS ZoneID
-                               FROM            PortalSettings
+                               FROM            {databaseOwner}{objectQualifier}PortalSettings
                                WHERE        (SettingName = N''ToSIC_SexyContent_ZoneID'')) AS PortalZoneMapping ON 
                          ToSIC_SexyContent_Templates.PortalID = PortalZoneMapping.PortalID INNER JOIN
                          ToSIC_EAV_Apps ON PortalZoneMapping.ZoneID = ToSIC_EAV_Apps.ZoneID INNER JOIN
